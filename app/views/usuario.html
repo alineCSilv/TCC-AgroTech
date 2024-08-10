@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div class="container mt-4">
+        <form class="needs-validation" method="POST" novalidate>
+            <h1>Alterar senha</h1>
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ user.nome }}" Readonly required>
+            </div>
+            <div class="form-group">
+                <label for="email">E-mail:</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" Readonly
+                    required>
+            </div>
+            <div class="form-group">
+                <label for="senha">Nova Senha:</label>
+                <input type="password" class="form-control" id="senha" name="senha" required>
+                <!-- <small id="senhaHelp" class="form-text text-muted">Deixe em branco para manter a senha atual.</small> -->
+                <div class="invalid-feedback">
+                    Informe a nova senha!
+                </div>
+            </div>
+            <!-- Confirmação de senha  -->
+            <div class="form-group">
+                <label for="confirmacao">Confirmação de Senha:</label>
+                <input type="password" class="form-control" id="confirmacao" name="confirmacao" required>
+                <div class="invalid-feedback">
+                    Confirme a nova senha!
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Salvar Alterações</button>
+        </form>
+    </div>
+</main>
+{% endblock %}

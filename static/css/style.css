@@ -1,0 +1,13 @@
+body{
+    background-color: #eee;
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.form-container {
+    max-width: 330px;
+    padding: 1rem;
+}

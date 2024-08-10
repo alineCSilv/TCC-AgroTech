@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Culturas Cadastradas</h1>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#culturaModal">Nova Cultura</button>
+        <button class="btn btn-primary" onclick="preencherComDadosDeTeste()">Preencher</button>
+    </div>
+
+    <div class="form-group">
+        <label for="filtro">Filtrar Culturas:</label>
+        <input type="text" class="form-control" id="filtro" placeholder="Digite o nome da cultura ou outra informação">
+    </div>
+    <div class="mt-4">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Nome da Cultura</th>
+                        <th>Data de cadastro</th>
+                        <th>Saturação mínima</th>
+                        <th>Saturação recomendada</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="culturasTableBody">
+                    <!-- Aqui serão inseridos dinamicamente os dados das culturas -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <! -- Modal -->
+        <div class="modal fade" id="culturaModal" tabindex="-1" role="dialog" aria-labelledby="culturaModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="culturaModalLabel">Nova Cultura</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="culturaForm">
+                            <div class="form-group" id="div_cod_cultura" hidden>
+                                <label for="cod_cultura">Código:</label>
+                                <input type="text" class="form-control" id="cod_cultura" name="cod_cultura" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="nome_cultura">Nome da Cultura:</label>
+                                <input type="text" class="form-control" id="nome_cultura" name="nome_cultura" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="data_cadastro">Data de Cadastro:</label>
+                                <input type="date" class="form-control" id="data_cadastro" name="data_cadastro" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vl_saturacao_minima">Saturação Mínima:</label>
+                                <input type="number" class="form-control" id="vl_saturacao_minima" name="vl_saturacao_minima" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="vl_saturacao_recomendada">Saturação Recomendada:</label>
+                                <input type="number" class="form-control" id="vl_saturacao_recomendada" name="vl_saturacao_recomendada" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="sg_estado">Estado:</label>
+                                <select class="form-control" id="sg_estado" name="sg_estado" required>
+                                    <option value="AC">AC - Acre</option>
+                                    <option value="AL">AL - Alagoas</option>
+                                    <option value="AP">AP - Amapá</option>
+                                    <option value="AM">AM - Amazonas</option>
+                                    <option value="BA">BA - Bahia</option>
+                                    <option value="CE">CE - Ceará</option>
+                                    <option value="DF">DF - Distrito Federal</option>
+                                    <option value="ES">ES - Espírito Santo</option>
+                                    <option value="GO">GO - Goiás</option>
+                                    <option value="MA">MA - Maranhão</option>
+                                    <option value="MT">MT - Mato Grosso</option>
+                                    <option value="MS">MS - Mato Grosso do Sul</option>
+                                    <option value="MG">MG - Minas Gerais</option>
+                                    <option value="PA">PA - Pará</option>
+                                    <option value="PB">PB - Paraíba</option>
+                                    <option value="PR">PR - Paraná</option>
+                                    <option value="PE">PE - Pernambuco</option>
+                                    <option value="PI">PI - Piauí</option>
+                                    <option value="RJ">RJ - Rio de Janeiro</option>
+                                    <option value="RN">RN - Rio Grande do Norte</option>
+                                    <option value="RS">RS - Rio Grande do Sul</option>
+                                    <option value="RO">RO - Rondônia</option>
+                                    <option value="RR">RR - Roraima</option>
+                                    <option value="SC">SC - Santa Catarina</option>
+                                    <option value="SP">SP - São Paulo</option>
+                                    <option value="SE">SE - Sergipe</option>
+                                    <option value="TO">TO - Tocantins</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </form>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+</main>
+<script>
+
+    /*Script para manipulação de dados de culturas*/
+
+    //Função para enviar os dados do formulário para o servidor
+    document.getElementById('culturaForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        var formData = new FormData(this);
+
+       
+        
+        // Verifica se existe um valor no campo cod_cultura e define a ação como edição ou exclusão
+        var isEditing = !!document.getElementById('cod_cultura').value;
+        var acao = isEditing ? '/edit' : '/exc';
+        fetch('/culturas', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    //Atualiando a tabela com os novos dados
+                    updateCulturasTableRow(data.cultura, isEditing, acao);
+
+                    document.getElementById('culturaForm').reset();
+                    $('#culturaModal').modal('hide');
+                } else {
+                    alert('Erro ao cadastrar a cultura.' + data.message);
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+    });
+
+    // Function to fill the form with test data
+    function preencherComDadosDeTeste() {
+        document.getElementById('nome_cultura').value = 'Milho';
+        document.getElementById('data_cadastro').value = '2020-01-01';
+        document.getElementById('vl_saturacao_minima').value = 0.5;
+        document.getElementById('vl_saturacao_recomendada').value = 0.7;
+        document.getElementById('sg_estado').value = "PR";
+    }
+
+    // Call the function to fill the form with test data
+    preencherComDadosDeTeste();
+
+    // Function to update the table with the new data
+    function updateCulturasTableRow(cultura, isEditing, acao) {
+        console.log(cultura);
+        var rowHTML = `
+            <tr>
+                <td>${cultura.cod_cultura}</td>
+                <td>${cultura.nome}</td>
+                <td>${cultura.data_cadastro}</td>
+                <td>${cultura.vl_saturacao_minima}</td>
+                <td>${cultura.vl_saturacao_recomendada}</td>
+                <td>${cultura.sg_estado}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary" onclick="editCultura(this)">Editar</button>
+                </td>
+            </tr>
+            `;
+
+        if (isEditing) {
+            var existingRows = document.querySelectorAll('#culturasTableBody tr');
+            var updated = false;
+            if (acao == '/exc') {
+                existingRows.forEach(function (row) {
+                    var cell = row.querySelector('td:first-child');
+                    if (cell && cell.innerText == cultura.cod_cultura) {
+                        row.remove();
+                        updated = true;
+                    }
+                });
+            }
+            else {
+                existingRows.forEach(function (row) {
+                    var cell = row.querySelector('td:first-child');
+                    if (cell && cell.innerText == cultura.cod_cultura) {
+                        row.innerHTML = rowHTML;
+                        updated = true;
+                    }
+                });
+            }
+
+            if (!updated) {
+                console.error('Error: Existing row not found');
+            }
+        } else {
+            document.getElementById('culturasTableBody').insertAdjacentHTML('beforeend', rowHTML);
+        }
+    }
+
+    // Função onload para carregar os dados iniciais de cultura
+    window.onload = function () {
+        fetch('/listar-culturas')
+            .then(response => response.json())
+            .then(data => {
+                //console.log(data.culturas);
+                if (data.status === 'success')
+                    data.culturas.forEach(cultura => updateCulturasTableRow(cultura, false, null));
+                else
+                    alert('Erro ao carregar as culturas.');
+            })
+            .catch(error => console.error('Erro:', error));
+    }
+
+    // Função para editar uma cultura
+    function editCultura(button) {
+        var row = button.parentNode.parentNode;
+        var cod_cultura = row.querySelector('td:first-child').innerText;
+        var nome = row.querySelector('td:nth-child(2)').innerText;
+        var data_cadastro = row.querySelector('td:nth-child(3)').innerText;
+        var vl_saturacao_minima = row.querySelector('td:nth-child(4)').innerText;
+        var vl_saturacao_recomendada = row.querySelector('td:nth-child(5)').innerText;
+        var sg_estado = row.querySelector('td:nth-child(6)').innerText;
+
+        document.getElementById('div_cod_cultura').hidden = false;
+        document.getElementById('cod_cultura').value = cod_cultura;
+        document.getElementById('nome_cultura').value = nome;
+        document.getElementById('data_cadastro').value = data_cadastro;
+        document.getElementById('vl_saturacao_minima').value = vl_saturacao_minima;
+        document.getElementById('vl_saturacao_recomendada').value = vl_saturacao_recomendada;
+        //document.getElementById('estado').value = estado == 'PR' ? 1 : 0;
+        document.getElementById('sg_estado').text = sg_estado;
+        $('#culturaModal').modal('show');
+    }
+
+</script>
+<!-- <script src="{{ url_for('static', filename='js/cultura.js') }}"></script> -->
+
+
+{% endblock %}

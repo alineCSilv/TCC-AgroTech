@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Análises de Solo Cadastradas</h1>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#analiseModal">Nova Análise</button>
+        <button class="btn btn-primary" onclick="preencherComDadosDeTeste()">Preencher</button>
+    </div>
+
+    <div class="form-group">
+        <label for="filtro">Filtrar Análises:</label>
+        <input type="text" class="form-control" id="filtro"
+            placeholder="Digite o nome do proprietário ou outra informação">
+    </div>
+
+    <div class="mt-4">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Nome do Proprietário</th>
+                        <th>Data da Análise</th>
+                        <th>pH do Solo</th>
+                        <th>P</th>
+                        <th>K</th>
+                        <th>Mg</th>
+                        <th>Ca</th>
+                        <th>Al</th>
+                        <th>H+Al</th>
+                        <th>SB</th>
+                        <th>CTC</th>
+                        <th>V%</th>
+                        <th>m%</th>
+                        <th>MO</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="analisesTableBody">
+                    <!-- Aqui serão inseridos dinamicamente os dados das análises -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<!-- Modal -->
+<div class="modal fade" id="analiseModal" tabindex="-1" role="dialog" aria-labelledby="analiseModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="analiseModalLabel">Nova Análise</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="analiseForm">
+                    <!--Div somente para visualização do codigo da analise-->
+                    <div class="form-group" id="div_cod_analise" hidden>
+                        <label for="cod_analise">Código:</label>
+                        <input type="text" class="form-control" id="cod_analise" name="cod_analise" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="proprietario">Nome do Proprietário:</label>
+                        <input type="text" class="form-control" id="proprietario" name="proprietario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataAnalise">Data da Análise:</label>
+                        <input type="date" class="form-control" id="dataAnalise" name="dataAnalise" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ph">pH do Solo (H2O):</label>
+                        <input type="number" class="form-control" id="ph" name="ph" step="0.01" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="fosforo">P (Fósforo):</label>
+                            <input type="number" class="form-control" id="fosforo" name="fosforo" step="0.01" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="potassio">K (Potássio):</label>
+                            <input type="number" class="form-control" id="potassio" name="potassio" step="0.01"
+                                required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="magnesio">Mg (Magnésio):</label>
+                            <input type="number" class="form-control" id="magnesio" name="magnesio" step="0.01"
+                                required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="calcio">Ca (Cálcio):</label>
+                            <input type="number" class="form-control" id="calcio" name="calcio" step="0.01" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="h_al">H+Al (Hidrogênio e Alumínio):</label>
+                            <input type="number" class="form-control" id="h_al" name="h_al" step="0.01" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="al">Al (Alumínio):</label>
+                            <input type="number" class="form-control" id="al" name="al" step="0.01" required>
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label for="sb">SB (Soma de Bases):</label>
+                            <input type="number" class="form-control" id="sb" name="sb" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-5">
+                            <label for="ctc">CTC (Capacidade de Troca Catiônica):</label>
+                            <input type="number" class="form-control" id="ctc" name="ctc" step="0.01" required>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="saturacao">V% (Saturação por Base):</label>
+                            <input type="number" class="form-control" id="saturacao" name="saturacao" step="0.01"
+                                required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="im">m%:</label>
+                            <input type="number" class="form-control" id="im" name="im" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="mo">MO (Matéria Orgânica):</label>
+                        <input type="number" class="form-control" id="mo" name="mo" step="0.01" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+                    <button type="button" class="btn btn-secondary" id="btn_excluir" >Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../static/js/analises.js"></script>
+{% endblock %}

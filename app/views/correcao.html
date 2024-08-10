@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-8">
+                <form id="calagemForm">
+                    <h1>Calculadora de Correção do pH do Solo</h1>
+
+                    <!-- Botão para abrir modal com datagrid de seleção de análise de solo -->
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#analiseModal">Selecionar Análise</button>
+                    </div>
+
+                    <!--Dados da analise selecionada -->
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="cod_analise">Código da Análise:</label>
+                                <input type="text" class="form-control" id="cod_analise" name="cod_analise" required
+                                    readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="proprietario">Proprietário:</label>
+                                <input type="text" class="form-control" id="proprietario" name="proprietario" required
+                                    readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="data_cadastro">Data da Análise:</label>
+                                <input type="date" class="form-control" id="data_cadastro" name="data_cadastro" required
+                                    readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Fim dos dados da analise selecionada -->
+
+                    <div class="form-group">
+                        <label for="cultura">Cultura:</label>
+                        <input type="text" class="form-control" id="cultura" name="cultura" list="cultura-list"
+                            required>
+                        <datalist id="cultura-list">
+                            {% for cultura in culturas %}
+                            <option value="{{ cultura.nome }}"
+                                data-vl_saturacao_recomendada="{{ cultura.vl_saturacao_recomendada }}"></option>
+                            {% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="ca">Cálcio (Ca) - cmolc/dm³:</label>
+                        <input type="number" value="3.7" class="form-control" id="ca" name="ca" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="mg">Magnésio (Mg) - cmolc/dm³:</label>
+                        <input type="number" value="0.9" class="form-control" id="mg" name="mg" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="k">Potássio (K) - cmolc/dm³:</label>
+                        <input type="number" value="0.2" class="form-control" id="k" name="k" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="h_al">Hidrogênio e Alumínio (H+Al) - cmolc/dm³:</label>
+                        <input type="number" value="7.2" class="form-control" id="h_al" name="h_al" step="0.01"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="al">Alumínio (Al) - cmolc/dm³:</label>
+                        <input type="number" value="0.4" class="form-control" id="al" name="al" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="vl_saturacao_recomendada">Saturação recomendada para a cultura %:</label>
+                        <input type="number" value="90" class="form-control" id="vl_saturacao_recomendada"
+                            name="vl_saturacao_recomendada" step="0.01" required>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="calcularCalagem()">Calcular</button>
+                    <button type="button" class="btn btn-primary" onclick="limparResultado()">Limpar</button>
+                </form>
+            </div>
+            <div class="col-lg-4">
+                <!-- Div para exibir o resultado -->
+                <div id="resultado" class="container mt-4">
+                    <!-- Tabela de resultados aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Modal para seleção de análise de solo -->
+    <div class="modal fade" id="analiseModal" tabindex="-1" role="dialog" aria-labelledby="analiseModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="analiseModalLabel">Selecionar Análise de Solo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table id="analiseTable" class="table table-striped" data-toggle="table" data-search="true"
+                        data-pagination="true" data-click-to-select="true" data-single-select="true">
+                        <thead>
+                            <tr>
+                                <th data-field="state" data-checkbox="true"></th>
+                                <th data-field="cod_analise">Código</th>
+                                <th data-field="proprietario">Proprietário</th>
+                                <th data-field="data_cadastro">Data da Análise</th>
+                                <th data-field="vl_ph">pH</th>
+                                <th data-field="vl_fosforo">Fósforo</th>
+                                <th data-field="vl_potassio">Potássio</th>
+                                <th data-field="vl_magnesio">Magnésio</th>
+                                <th data-field="vl_calcio">Cálcio</th>
+                                <th data-field="vl_al">Alumínio</th>
+                                <th data-field="vl_h_al">H+Al</th>
+                                <th data-field="vl_sb">SB</th>
+                                <th data-field="vl_ctc">CTC</th>
+                                <th data-field="vl_saturacao">Saturação</th>
+                                <th data-field="vl_mo">Matéria Orgânica</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for analise in analises %}
+                            <tr data-analise-id="{{ analise.cod_analise }}">
+                                <td></td>
+                                <td>{{ analise.cod_analise }}</td>
+                                <td>{{ analise.proprietario }}</td>
+                                <td>{{ analise.data_cadastro }}</td>
+                                <td>{{ analise.vl_ph }}</td>
+                                <td>{{ analise.vl_fosforo }}</td>
+                                <td>{{ analise.vl_potassio }}</td>
+                                <td>{{ analise.vl_magnesio }}</td>
+                                <td>{{ analise.vl_calcio }}</td>
+                                <td>{{ analise.vl_al }}</td>
+                                <td>{{ analise.vl_h_al }}</td>
+                                <td>{{ analise.vl_sb }}</td>
+                                <td>{{ analise.vl_ctc }}</td>
+                                <td>{{ analise.vl_saturacao }}</td>
+                                <td>{{ analise.vl_mo }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" onclick="selecionarAnalise()">Selecionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    //Inicializar a tabela de análises
+    function calcularCalagem() {
+        //Verificar se há uma analise selecionada
+        if (!document.getElementById('cod_analise').value) {
+            alert('Selecione uma análise de solo');
+            return;
+        }
+        else if (!document.getElementById('cultura').value) {
+            alert('Selecione uma cultura');
+            return;
+        }
+        else {
+            //Pegar os valores dos campos do formulário
+
+            var ca = parseFloat(document.getElementById('ca').value);
+            var mg = parseFloat(document.getElementById('mg').value);
+            var k = parseFloat(document.getElementById('k').value);
+            var al = parseFloat(document.getElementById('al').value);
+            var h_al = parseFloat(document.getElementById('h_al').value);
+            var vl_saturacao_recomendada = parseFloat(document.getElementById('vl_saturacao_recomendada').value);
+            var sb = ca + mg + k;
+            var ctc = sb + h_al;
+
+            /*
+            A legislação prevê um valor mínimo PRNT para Cal Hidratada de 90%
+            */
+            prnt = 90;
+
+            //v porcentagem de saturação por bases atual do solo
+            var v = (sb / ctc) * 100;
+
+            // v2 porcentagem de saturação desejada pela cultura
+            var v2 = parseFloat(document.getElementById('vl_saturacao_recomendada').value);
+
+            //nc necessidade de calagem
+            var nc = ((v2 - v) * ctc) / prnt;
+
+            //Capacidade de troca cationica ctce efetiva
+            var ctce = sb + al;
+
+            //Necessidade de gesso em %
+            var vng = (ca * 100) / ctce;
+
+
+            var qtg = 0;
+            if (vng < 54) {
+                qtg = (0.6 * ctc - Math.pow(ca, 2)) * 6.4;
+            }
+
+            //Formatar o resultado
+            var resultado = '<table class="table table-striped">';
+            resultado += '<thead><tr><th>Propriedade</th><th>Valor</th></tr></thead>';
+            resultado += '<tbody>';
+
+            resultado += '<tr><td>Cálcio (Ca) - cmolc/dm³</td><td>' + ca.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>Magnésio (Mg) - cmolc/dm³</td><td>' + mg.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>Potássio (K) - cmolc/dm³</td><td>' + k.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>Hidrogênio e Alumínio (H+Al) - cmolc/dm³</td><td>' + h_al.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>Alumínio (Al) - cmolc/dm³</td><td>' + al.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>SB - cmolc/dm³</td><td>' + sb.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>CTC - cmolc/dm³</td><td>' + ctc.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>Saturação por bases (V%)</td><td>' + v.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>NC - Necessidade de Calagem</td><td>' + nc.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>CTC efetiva - cmolc/dm³</td><td>' + ctce.toFixed(2) + '</td></tr>';
+            resultado += '<tr><td>Saturação em % desejado pela cultura</td><td>' + v2.toFixed(2) + '</td></tr>';
+            //Se vng < 54 = sim caso contrário = não
+            if (vng < 54) {
+                ng = "Sim";
+            } else {
+                ng = "Não";
+            }
+            resultado += '<tr><td>NC - Necessidade de Gesso</td><td>' + ng + '</td></tr>';
+            resultado += '<tr><td>Quantidade de Gesso</td><td>' + qtg.toFixed(2) + '</td></tr>';
+
+            resultado += '</tbody></table>';
+
+            //Exibir o resultado
+            document.getElementById('resultado').innerHTML = resultado;
+            document.getElementById('resultado').classList.remove('d-none');
+
+        }
+    }
+
+    function limparResultado() {
+        document.getElementById('resultado').innerHTML = "";
+    }
+
+    //Função para selecionar a análise de solo e preencher os campos do formulário
+    function selecionarAnalise() {
+        //Pega a linha selecionada na tabela de análises getSelections retorna um objeto javascript
+        var selectedRow = $('#analiseTable').bootstrapTable('getSelections')[0];
+        if (selectedRow) {
+
+            //Debug console.log(selectedRow);
+
+            //Preencher os campos do formulário com os valores da análise selecionada
+            document.getElementById('cod_analise').value = selectedRow.cod_analise;
+            document.getElementById('proprietario').value = selectedRow.proprietario;
+            document.getElementById('data_cadastro').value = selectedRow.data_cadastro.split(' ')[0];
+            document.getElementById('ca').value = selectedRow.vl_calcio;
+            document.getElementById('mg').value = selectedRow.vl_magnesio;
+            document.getElementById('k').value = selectedRow.vl_potassio;
+            document.getElementById('h_al').value = selectedRow.vl_h_al;
+            document.getElementById('al').value = selectedRow.vl_al;
+            //Copia a linha da tabela para a tblAnalise
+            /*               
+                           // Obtém todas as linhas da tabela
+                           var rows = $('#analiseTable').bootstrapTable('getData');
+                           
+                           // Encontra o índice da linha selecionada
+                           var rowIndex = rows.findIndex(row => row.cod_analise === selectedRow.cod_analise);
+                           
+                           // Clona a linha selecionada usando o índice
+                           var $row = $('#analiseTable tbody tr').eq(rowIndex).clone();
+           
+                           //Remove a primeira coluna da linha clonada
+                           $row.find('td:first').remove();
+                           
+                           //Remove a linha anterior da tabela de destino
+                           $('#tblAnalise tbody tr').remove();  
+           
+                           // Adiciona a linha clonada à tabela de destino
+                           $('#tblAnalise tbody').append($row); 
+           */
+            //Fecha o modal
+            $('#analiseModal').modal('hide');
+
+        }
+        else {
+            alert('Selecione uma análise de solo');
+        }
+    }
+
+    //Adicionar evento onchange no campo de cultura para preencher o campo de saturação recomendada
+    document.getElementById('cultura').addEventListener('change', function () {
+        var cultura = this.value;
+        var culturas = document.getElementById('cultura-list').getElementsByTagName('option');
+        for (var i = 0; i < culturas.length; i++) {
+            if (culturas[i].value == cultura) {
+                document.getElementById('vl_saturacao_recomendada').value = culturas[i].getAttribute('data-vl_saturacao_recomendada');
+                break;
+            }
+        }
+    });
+
+</script>
+{% endblock %}

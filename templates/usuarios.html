@@ -1,0 +1,45 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class="container mt-4">
+        <h1>Cadastrar novo usuário</h1>
+        <form id="usuarioForm" class="mt-4">
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" class="form-control" id="nome" name="nome" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha:</label>
+                <input type="password" class="form-control" id="senha" name="senha" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <button type="button" class="btn btn-secondary" onclick="limparForm()">Limpar</button>
+        </form>
+
+        <h2 class="mt-4">Lista de Usuários</h2>
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="usuariosBody">
+                <!-- Os usuários serão inseridos aqui dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+    // Função para limpar o formulário
+    function limparForm() {
+        document.getElementById("usuarioForm").reset();
+    }
+    </script>
+
+{% endblock %}

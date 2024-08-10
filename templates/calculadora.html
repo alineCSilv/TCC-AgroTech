@@ -1,0 +1,81 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class="container mt-4">
+        <h1>Calculadora de Correção do PH Solo</h1>
+        <form id="calagemForm">
+            <div class="form-group">
+                <label for="ca">Cálcio (Ca) - cmolc/dm³:</label>
+                <input type="number" value="3.7" class="form-control" id="ca" name="ca" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="mg">Magnésio (Mg) - cmolc/dm³:</label>
+                <input type="number" value="0.9" class="form-control" id="mg" name="mg" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="k">Potássio (K) - cmolc/dm³:</label>
+                <input type="number" value="0.2" class="form-control" id="k" name="k" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="h_al">Hidrogênio e Alumínio (H+Al) - cmolc/dm³:</label>
+                <input type="number" value="7.2" class="form-control" id="h_al" name="h_al" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="al">Alumínio (Al) - cmolc/dm³:</label>
+                <input type="number" value="0.4" class="form-control" id="al" name="al" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="prnt">PRNT (Percentual de calcário) - %:</label>
+                <input type="number" value="90" class="form-control" id="prnt" name="prnt" step="0.01" required>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="calcularCalagem()">Calcular</button>
+            <button type="button" class="btn btn-primary" onclick="LimparResultado()">Limpar</button>
+
+        </form>
+        
+        <div id="resultado" class="mt-4"></div>
+    </div>
+
+    <!-- Adicionando Bootstrap JS (opcional, apenas se você precisar de componentes JavaScript do Bootstrap) -->
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> -->
+
+    <script>
+        function calcularCalagem() {
+            var ca = parseFloat(document.getElementById('ca').value);
+            var mg = parseFloat(document.getElementById('mg').value);
+            var k = parseFloat(document.getElementById('k').value);
+            var al = parseFloat(document.getElementById('al').value);
+            var h_al = parseFloat(document.getElementById('h_al').value);
+            var prnt = parseFloat(document.getElementById('prnt').value);
+
+            var sb = ca + mg + k;
+            var ctc = sb + h_al;
+            var v = (sb / ctc) * 100;
+
+            var v2 = 70; // Desejado pela cultura
+            var nc = ((v2 - v) * ctc) / prnt;
+            var ctce = sb + al;
+            var vng = (ca * 100) / ctce;
+
+            
+            if (vng < 54) {
+                ng = (0.6 * ctc - Math.pow(ca, 2)) * 6.4;
+            } else {
+                ng = 0
+            }
+
+            document.getElementById('resultado').innerHTML = "<h2>Resultados:</h2>" +
+                "<p> VNG : " + vng.toFixed(2) + " Obs2: Quando o valor for menor que 54%, deve se realizar gessagem na camada 20-40cm </p>" +
+                "<p>Soma de Bases (SB): " + sb.toFixed(2) + " cmolc/dm³</p>" +
+                "<p>Capacidade de Troca Catiônica (CTC): " + ctc.toFixed(2) + " cmolc/dm³</p>" +
+                "<p>Saturação por Base (V): " + v.toFixed(2) + "%</p>" +
+                "<p>Necessidade de Calagem (NC): " + nc.toFixed(2) + " t/ha</p>" +
+                "<p>Necessidade de Gessagem (NG): " + ng.toFixed(2) + " t/ha % </p>";
+        }
+        function LimparResultado() {
+    
+            document.getElementById('resultado').innerHTML = "";
+        }
+        
+    </script>
+{% endblock %}

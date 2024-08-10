@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container mt-4">
+        <form>
+            <h1>Cadastro de Análise de Solo</h1>
+            <div class="form-group">
+                <label for="nomeProprietario">Nome do Proprietário:</label>
+                <input type="text" class="form-control" id="nomeProprietario" name="nomeProprietario" required>
+            </div>
+            <div class="form-group">
+                <label for="dataAnalise">Data da Análise:</label>
+                <input type="date" class="form-control" id="dataAnalise" name="dataAnalise" required>
+            </div>
+            <div class="form-group">
+                <label for="phSolo">pH do Solo (H2O):</label>
+                <input type="number" class="form-control" id="phSolo" name="phSolo" step="0.01" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="p">P (Fósforo):</label>
+                    <input type="number" class="form-control" id="p" name="p" step="0.01" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="k">K (Potássio):</label>
+                    <input type="number" class="form-control" id="k" name="k" step="0.01" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="mg">Mg (Magnésio):</label>
+                    <input type="number" class="form-control" id="mg" name="mg" step="0.01" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="ca">Ca (Cálcio):</label>
+                    <input type="number" class="form-control" id="ca" name="ca" step="0.01" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="h_al">H+Al (Hidrogênio e Alumínio):</label>
+                    <input type="number" class="form-control" id="h_al" name="h_al" step="0.01" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="sb">SB (Soma de Bases):</label>
+                    <input type="number" class="form-control" id="sb" name="sb" step="0.01" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <label for="ctc">CTC (Capacidade de Troca Catiônica):</label>
+                    <input type="number" class="form-control" id="ctc" name="ctc" step="0.01" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="v">V% (Saturação por Base):</label>
+                    <input type="number" class="form-control" id="v" name="v" step="0.01" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="m">m%:</label>
+                    <input type="number" class="form-control" id="m" name="m" step="0.01" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="mo">MO (Matéria Orgânica):</label>
+                <input type="number" class="form-control" id="mo" name="mo" step="0.01" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </form>
+    </div>
+{% endblock %}

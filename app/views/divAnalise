@@ -1,0 +1,43 @@
+<!--cria div com tabela para inserção dos dados da linha da tabela selecionada selectedRow -->
+            <div id="divAnalise" class="form-group">
+                <label for="idAnalise">Análise de Solo Selecionada:</label>
+                <table id="tblAnalise" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Proprietário</th>
+                            <th>Data da Análise</th>
+                            <th>pH</th>
+                            <th>Fósforo</th>
+                            <th>Potássio</th>
+                            <th>Magnésio</th>
+                            <th>Cálcio</th>
+                            <th>Alumínio</th>
+                            <th>H+Al</th>
+                            <th>SB</th>
+                            <th>CTC</th>
+                            <th>Saturação</th>
+                            <th>Matéria Orgânica</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td id="cod_analise"></td>
+                            <td id="proprietario"></td>
+                            <td id="data_cadastro"></td>
+                            <td id="vl_ph"></td>
+                            <td id="vl_fosforo"></td>
+                            <td id="vl_potassio"></td>
+                            <td id="vl_magnesio"></td>
+                            <td id="vl_calcio"></td>
+                            <td id="vl_al"></td>
+                            <td id="vl_h_al"></td>
+                            <td id="vl_sb"></td>
+                            <td id="vl_ctc"></td>
+                            <td id="vl_saturacao"></td>
+                            <td id="vl_mo"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <input type="hidden" id="idAnalise" name="idAnalise">
+            </div>

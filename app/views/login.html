@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-12 px-4"> <!--Alterada largura de col-lg-10 para col-lg-12 para ocupar toda a pagina -->
+    <div id="div-login" class="d-flex align-itens-center py-4 bg-body-tertiary">
+        <main class="w-100 m-auto form-container">
+            <form id="loginForm" class="mt-4" method="POST">
+                <div class="row marcador align-items-center">
+                    <div class="col mx-auto text-center">
+                        <img class="img-responsive" src="../static/img/logo.png" alt="Logo" width="100%"
+                            height="100%">
+                    </div>
+                </div>
+                <h1 class="h3 mb-3 fw-normal text-center">Login</h1>
+                <div class="form-floating">
+                    <input type="email" class="form-control" placeholder="E-mail" id="email" name="email" required>
+                    <div class="invalid-feedback">
+                        Por favor informe seu e-mail.
+                    </div>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" placeholder="Password" id="senha" name="senha" required>
+                </div>
+                <div class="row marcador align-items-center mt-3">
+                    <div class="col mx-auto text-center">
+                        <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
+                    </div>
+                </div>
+                <div class="row marcador align-items-center mt-3">
+                    <div class="col mx-auto text-center">
+                        <a href="/register">
+                            <h1 class="h6 mb-3 fw-normal">Não é cadsatrado, clique aqui para se cadastrar</h1>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+</main>
+
+<script>
+    /*     // Função para limpar o formulário
+        function limparForm() {
+            document.getElementById("loginForm").reset();
+        } */
+</script>
+
+<link rel="stylesheet" href="../static/css/login.css">
+
+{% endblock %}
